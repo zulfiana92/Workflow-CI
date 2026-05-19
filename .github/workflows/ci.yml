@@ -47,8 +47,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/heart-disease-model:latest
+      - name: Build Docker Image with MLflow
+        run: |
+          mlflow models build-docker \
+            --model-uri "MLProject/mlruns/0/$(ls MLProject/mlruns/0 | head -1)/artifacts/random_forest_model" \
+            --name "${{ secrets.DOCKERHUB_USERNAME }}/heart-disease-model:latest"
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/heart-disease-model:latest
