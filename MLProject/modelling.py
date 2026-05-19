@@ -1,4 +1,3 @@
-import dagshub
 import mlflow
 import mlflow.sklearn
 import pandas as pd
@@ -16,11 +15,9 @@ import os
 # =========================
 # SETUP DAGSHUB + MLFLOW
 # =========================
-dagshub.init(
-    repo_owner='zulfiana92',
-    repo_name='Eksperimen_SML_Zulfiana-Majid',
-    mlflow=True
-)
+os.environ['MLFLOW_TRACKING_URI'] = 'https://dagshub.com/zulfiana92/Eksperimen_SML_Zulfiana-Majid.mlflow'
+os.environ['MLFLOW_TRACKING_USERNAME'] = os.environ.get('MLFLOW_TRACKING_USERNAME', '')
+os.environ['MLFLOW_TRACKING_PASSWORD'] = os.environ.get('MLFLOW_TRACKING_PASSWORD', '')
 
 mlflow.set_experiment("heart_disease_workflow_ci")
 
