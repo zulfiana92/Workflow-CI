@@ -26,10 +26,10 @@ mlflow.set_experiment("heart_disease_workflow_ci")
 # =========================
 def load_data():
     train_data = pd.read_csv(
-        "MLProject/heart_disease_preprocessing/train_data.csv"
+        "heart_disease_preprocessing/train_data.csv"
     )
     test_data = pd.read_csv(
-        "MLProject/heart_disease_preprocessing/test_data.csv"
+        "heart_disease_preprocessing/test_data.csv"
     )
     X_train = train_data.drop(columns='target')
     y_train = train_data['target']
