@@ -96,7 +96,7 @@ def save_roc_curve(model, X_test, y_test):
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test = load_data()
    
-    with mlflow.start_run(run_name="rf_workflow_ci", nested=True):
+    with mlflow.start_run(run_name="rf_workflow_ci"):
         # Training
         model = RandomForestClassifier(
             n_estimators=200,
