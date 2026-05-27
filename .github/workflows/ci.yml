@@ -67,3 +67,7 @@ jobs:
           mlflow models build-docker \
             --model-uri "models:/random_forest_model/latest" \
             --name "${{ secrets.DOCKERHUB_USERNAME }}/heart-disease-model:latest"
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/heart-disease-model:latest
