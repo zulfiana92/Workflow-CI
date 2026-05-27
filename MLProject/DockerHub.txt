@@ -1,4 +1,2 @@
 Docker Hub Repository:
-https://hub.docker.com/r/DOCKERHUB_USERNAME/heart-disease-model
-
-Ganti DOCKERHUB_USERNAME dengan username Docker Hub kamu.
+https://hub.docker.com/r/zulfiana92/heart-disease-model
