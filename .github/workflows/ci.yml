@@ -65,9 +65,5 @@ jobs:
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
           mlflow models build-docker \
-            --model-uri "runs:/${{ steps.get_run_id.outputs.run_id }}/random_forest_model" \
+            --model-uri "models:/random_forest_model/latest" \
             --name "${{ secrets.DOCKERHUB_USERNAME }}/heart-disease-model:latest"
-
-      - name: Push Docker Image to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/heart-disease-model:latest
