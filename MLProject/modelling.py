@@ -15,10 +15,8 @@ from sklearn.metrics import (
 # =========================
 # SETUP MLFLOW + DAGSHUB
 # =========================
-os.environ['MLFLOW_TRACKING_URI'] = 'https://dagshub.com/zulfiana92/Eksperimen_SML_Zulfiana-Majid.mlflow'
-os.environ['MLFLOW_TRACKING_USERNAME'] = os.environ.get('MLFLOW_TRACKING_USERNAME', '')
-os.environ['MLFLOW_TRACKING_PASSWORD'] = os.environ.get('MLFLOW_TRACKING_PASSWORD', '')
-
+tracking_uri = os.environ.get('MLFLOW_TRACKING_URI', 'sqlite:///mlruns.db')
+mlflow.set_tracking_uri(tracking_uri)
 mlflow.set_experiment("heart_disease_workflow_ci")
 
 # =========================
@@ -88,41 +86,45 @@ def save_roc_curve(model, X_test, y_test):
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test = load_data()
 
-    model = RandomForestClassifier(
-        n_estimators=200,
-        max_depth=10,
-        min_samples_split=2,
-        min_samples_leaf=1,
-        random_state=42
-    )
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    y_prob = model.predict_proba(X_test)[:, 1]
+    with mlflow.start_run(run_name="rf_workflow_ci"):
+        model = RandomForestClassifier(
+            n_estimators=200,
+            max_depth=10,
+            min_samples_split=2,
+            min_samples_leaf=1,
+            random_state=42
+        )
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        y_prob = model.predict_proba(X_test)[:, 1]
 
-    mlflow.log_param("n_estimators", 200)
-    mlflow.log_param("max_depth", 10)
-    mlflow.log_param("min_samples_split", 2)
-    mlflow.log_param("min_samples_leaf", 1)
-    mlflow.log_param("random_state", 42)
+        mlflow.log_param("n_estimators", 200)
+        mlflow.log_param("max_depth", 10)
+        mlflow.log_param("min_samples_split", 2)
+        mlflow.log_param("min_samples_leaf", 1)
+        mlflow.log_param("random_state", 42)
 
-    mlflow.log_metric("accuracy", accuracy_score(y_test, y_pred))
-    mlflow.log_metric("precision", precision_score(y_test, y_pred))
-    mlflow.log_metric("recall", recall_score(y_test, y_pred))
-    mlflow.log_metric("f1_score", f1_score(y_test, y_pred))
-    mlflow.log_metric("roc_auc", roc_auc_score(y_test, y_prob))
+        mlflow.log_metric("accuracy", accuracy_score(y_test, y_pred))
+        mlflow.log_metric("precision", precision_score(y_test, y_pred))
+        mlflow.log_metric("recall", recall_score(y_test, y_pred))
+        mlflow.log_metric("f1_score", f1_score(y_test, y_pred))
+        mlflow.log_metric("roc_auc", roc_auc_score(y_test, y_prob))
 
-    mlflow.sklearn.log_model(model, "random_forest_model")
+        mlflow.sklearn.log_model(sk_model=model,
+        artifact_path="random_forest_model",
+        registered_model_name="random_forest_model")
+        print("✅ Model logged!")
 
-    mlflow.log_artifact(save_confusion_matrix(y_test, y_pred))
-    mlflow.log_artifact(save_feature_importance(model, list(X_train.columns)))
-    mlflow.log_artifact(save_roc_curve(model, X_test, y_test))
+        mlflow.log_artifact(save_confusion_matrix(y_test, y_pred))
+        mlflow.log_artifact(save_feature_importance(model, list(X_train.columns)))
+        mlflow.log_artifact(save_roc_curve(model, X_test, y_test))
 
-    report = classification_report(y_test, y_pred)
-    with open("classification_report.txt", "w") as f:
-        f.write(report)
-    mlflow.log_artifact("classification_report.txt")
+        report = classification_report(y_test, y_pred)
+        with open("classification_report.txt", "w") as f:
+            f.write(report)
+        mlflow.log_artifact("classification_report.txt")
 
-    print("✅ Accuracy :", accuracy_score(y_test, y_pred))
-    print("✅ F1 Score :", f1_score(y_test, y_pred))
-    print("✅ ROC AUC  :", roc_auc_score(y_test, y_prob))
-    print("🎉 Training selesai!")
+        print("✅ Accuracy :", accuracy_score(y_test, y_pred))
+        print("✅ F1 Score :", f1_score(y_test, y_pred))
+        print("✅ ROC AUC  :", roc_auc_score(y_test, y_prob))
+        print("🎉 Training selesai!")
