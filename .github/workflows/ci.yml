@@ -30,6 +30,7 @@ jobs:
           MLFLOW_TRACKING_URI: https://dagshub.com/zulfiana92/Eksperimen_SML_Zulfiana-Majid.mlflow
         run: |
           mlflow run MLProject --env-manager=local
+          --experiment-name heart_disease_workflow_ci
 
       - name: Get Latest Run ID
         id: get_run_id

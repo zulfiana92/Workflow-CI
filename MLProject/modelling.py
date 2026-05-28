@@ -17,7 +17,6 @@ from sklearn.metrics import (
 # =========================
 tracking_uri = os.environ.get('MLFLOW_TRACKING_URI', 'sqlite:///mlruns.db')
 mlflow.set_tracking_uri(tracking_uri)
-mlflow.set_experiment("heart_disease_workflow_ci")
 
 # =========================
 # LOAD DATA
